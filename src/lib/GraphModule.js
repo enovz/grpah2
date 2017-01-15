@@ -9,7 +9,7 @@ function GraphModule(containerId, graphData = []) {
     this.height = 0;
     this._container = typeof (this._containerId) === 'string' ? document.getElementById(this._containerId) : this._containerId;
 
-    //check support
+    //check container
     if (!this._container && window.console) {
         console.log('div with id ' + this._containerId + ' not found');
     }
@@ -17,15 +17,17 @@ function GraphModule(containerId, graphData = []) {
     //setup container
     this._container.innerHTML = "";
 
+    let height = this._container.clientHeight > 0 ? this._container.clientHeight : 0;
     let width = this._container.clientWidht > 0 ? this._container.clientWidht : 0;
-    let height = this._container.clientHeight > 0 ? this._container.clientWidht : 0;
 
     this.width = width;
     this.height = height;
 
     //setup canvas
     this.canvas = this.createCanvas(width, height);
-    
+
+    //events
+    window.onresize = this.updateSize.bind(this);
 }
 
 GraphModule.prototype.isCanvasSupported = function () {
@@ -49,7 +51,7 @@ GraphModule.prototype.setCanvasSize = function (canvas, width, height) {
 
     let devicePixelRatio = window.devicePixelRatio || 1;
     let backingStoreRatio = 1;
-    let devicePixelBackingStoreRatio = true ? devicePixelRatio / backingStoreRatio : 1;
+    let devicePixelBackingStoreRatio = true ? (devicePixelRatio / backingStoreRatio) : 1;
 
     let context = canvas.getContext('2d');
 
@@ -60,7 +62,7 @@ GraphModule.prototype.setCanvasSize = function (canvas, width, height) {
         context.backingStorePixelRatio || 1;
 
 
-    devicePixelBackingStoreRatio = devicePixelRatio / backingStoreRatio;
+    this.devicePixelBackingStoreRatio = devicePixelRatio / backingStoreRatio;
 
     canvas.width = width * devicePixelBackingStoreRatio;
     canvas.height = height * devicePixelBackingStoreRatio;
@@ -79,7 +81,6 @@ GraphModule.prototype.setCanvasSize = function (canvas, width, height) {
     }
 
 }
-/*on window resize
 GraphModule.prototype.updateSize = function () {
 
     let width = 0;
@@ -91,14 +92,12 @@ GraphModule.prototype.updateSize = function () {
     if (this.canvas.width !== width * this.devicePixelBackingStoreRatio || this.canvas.height !== height * this.devicePixelBackingStoreRatio) {
         this.setCanvasSize(this.canvas, width, height);
 
-        return true;
     }
 
-    return false;
 }
 GraphModule.prototype.init = function () {
 
-}*/
+}
 
 
 export default GraphModule;
