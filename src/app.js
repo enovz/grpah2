@@ -1,6 +1,8 @@
 
 import GraphModule from './lib/GraphModule'
+import Chart from './lib/Chart'
 
-var graphModule = new GraphModule("graph-container");
+//const graphModule = new GraphModule("graph-container");
 
-console.log(graphModule);
+const chartModule = new Chart("chart");
+chartModule.init();
