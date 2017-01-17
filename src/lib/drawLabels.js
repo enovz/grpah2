@@ -30,24 +30,21 @@ function plotChartAxis(axis, context, settings) {
     context.fillStyle = settings.color;
     let offset = (Math.PI * 2);
 
-
     //collumns
     for (let i = 0; i < axis.collumns; i++) {
 
         let col = (100 * (i + 1)) - offset;
 
-        //transform numbers to letters
-        let letter = String.fromCharCode((i + 65));
-        context.fillText(letter, col, 50);
-
+        context.fillText((i+1), col, 50);
     }
     //rows
     for (let j = 0; j < axis.rows; j++) {
 
         let row = (100 * (j + 1)) + offset;
-        
-        context.fillText((j+1), 40, row);
 
+        //transform numbers to letters
+        let letter = String.fromCharCode((j + 65));
+        context.fillText(letter, 40, row);
     }
 
 }
