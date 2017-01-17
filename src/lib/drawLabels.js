@@ -46,7 +46,7 @@ function plotChartAxis(axis, context, settings) {
 
         let row = (100 * (j + 1)) + offset;
         
-        context.fillText(j, 40, row);
+        context.fillText((j+1), 40, row);
 
     }
 
