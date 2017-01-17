@@ -13,25 +13,31 @@
  *      3.1. 
  */
 
+import parseGraph from './parseGraph'
 import DataPoint from './DataPoint'
 
 //Chart
-function Chart(chartId, data = []) {
+function Chart(chartId, graph = []) {
 
     this._chartId = chartId;
-    this._chartData = data;
+    this._chartData = parseGraph(graph.slice());
+    this._view = {};
+    this._dataPoints = [];
+
     //events
-    window.onresize = this.render.bind(this);
+    //window.onresize = this.render.bind(this);
 }
 
-Chart.prototype.render = function () {
+//refactor
+
+/*Chart.prototype.render = function () {
 
     //get view
     this._view = this.getView(this._chartId);
 
     //refresh
     this.refresh(this._view);
-}
+}*/
 Chart.prototype.getView = function (chartId) {
 
     //view elements
@@ -55,8 +61,7 @@ Chart.prototype.getView = function (chartId) {
         aspectRatio: ratio
     }
 }
-Chart.prototype.refresh = function (view) {
-
+Chart.prototype.render = function () {
 
     let settings = {
         texts: {
@@ -79,22 +84,44 @@ Chart.prototype.refresh = function (view) {
             counterClockwiseValue: true
         }
     };
-    
-    //this.drawLabels
-    this.drawDataPoints(this._chartData, view, settings.arcs);
+
+    //test
+    //get view
+    this._view = this.getView(this._chartId);
+
+    //this.drawLabels(this._chartData, view, settings.texts);
+    this._dataPoints = this.drawDataPoints(this._chartData, this._view, settings.arcs);
 
 
 }
-Chart.prototype.drawDataPoints = function(dataPoints, view, settings){
+Chart.prototype.drawDataPoints = function (chartData, view, settings) {
 
-    let datapoints = [];
+    let dataPoints = [];
 
-    let dataPoint = new DataPoint(view, settings);
-   
+    for (let i = 0; i < chartData.length; i++) {
+
+        let elementsGroup = chartData[i];
+        let row = ((i + 1) * 100);
+
+        for (let j = 0; j < elementsGroup.length; j++) {
+
+            let col = ((j + 1) * 100);
+
+            let dataPoint = new DataPoint(view.context, col, row, settings.radius);
+            dataPoints.push(dataPoint);
+        }
+    }
+
+    return dataPoints;
+
 }
 Chart.prototype.init = function () {
 
+    //render view
     this.render();
+
+    //events
+    window.onresize = this.render.bind(this);
 }
 
 
@@ -123,3 +150,15 @@ export default Chart;
         counterClockwiseValue: true
     }
 };*/
+/**
+ * $('#myCanvas').click(function (e) {
+    var clickedX = e.pageX - this.offsetLeft;
+    var clickedY = e.pageY - this.offsetTop;
+     
+    for (var i = 0; i < circles.length; i++) {
+        if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
+            alert ('clicked number ' + (i + 1));
+        }
+    }
+});
+ */
