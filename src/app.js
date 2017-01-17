@@ -27,4 +27,3 @@ let graph = [
 
 const chartModule = new Chart("chart", graph);
 chartModule.init();
-console.log(chartModule._dataPoints);

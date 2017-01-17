@@ -14,30 +14,19 @@
  */
 
 import parseGraph from './parseGraph'
-import DataPoint from './DataPoint'
+import drawDataPoints from './drawDataPoints'
+import drawLabels from './drawLabels'
 
 //Chart
 function Chart(chartId, graph = []) {
 
     this._chartId = chartId;
-    this._chartData = parseGraph(graph.slice());
+    this._chartData = parseGraph(graph);
     this._view = {};
     this._dataPoints = [];
 
-    //events
-    //window.onresize = this.render.bind(this);
 }
 
-//refactor
-
-/*Chart.prototype.render = function () {
-
-    //get view
-    this._view = this.getView(this._chartId);
-
-    //refresh
-    this.refresh(this._view);
-}*/
 Chart.prototype.getView = function (chartId) {
 
     //view elements
@@ -70,7 +59,7 @@ Chart.prototype.render = function () {
             style: "Arial",
             color: "green",
             getFont: function () {
-                return "" + defaultSettings.texts.size + defaultSettings.texts.unit + " " + defaultSettings.texts.style;
+                return "" + settings.texts.size + settings.texts.unit + " " + settings.texts.style;
             },
             x: 50,
             y: 50
@@ -85,35 +74,28 @@ Chart.prototype.render = function () {
         }
     };
 
-    //test
     //get view
     this._view = this.getView(this._chartId);
 
-    //this.drawLabels(this._chartData, view, settings.texts);
-    this._dataPoints = this.drawDataPoints(this._chartData, this._view, settings.arcs);
-
+    this._labels = drawLabels(this._chartData, this._view.context, settings.texts);
+    this._dataPoints = drawDataPoints(this._chartData, this._view.context, settings.arcs.radius);
 
 }
-Chart.prototype.drawDataPoints = function (chartData, view, settings) {
+Chart.prototype.elementClick = function (event) {
 
-    let dataPoints = [];
+    let clickedX = event.pageX - this._view.canvas.offsetLeft;
+    let clickedY = event.pageY - this._view.canvas.offsetTop;
 
-    for (let i = 0; i < chartData.length; i++) {
+    for (var i = 0; i < this._dataPoints.length; i++) {
 
-        let elementsGroup = chartData[i];
-        let row = ((i + 1) * 100);
+        let position = this._dataPoints[i].position;
 
-        for (let j = 0; j < elementsGroup.length; j++) {
+        if (clickedX < position.right && clickedX > position.left && clickedY < position.bottom && clickedY > position.top) {
 
-            let col = ((j + 1) * 100);
-
-            let dataPoint = new DataPoint(view.context, col, row, settings.radius);
-            dataPoints.push(dataPoint);
+            //got clicked element
+            console.log(this._dataPoints[i]);
         }
     }
-
-    return dataPoints;
-
 }
 Chart.prototype.init = function () {
 
@@ -122,43 +104,12 @@ Chart.prototype.init = function () {
 
     //events
     window.onresize = this.render.bind(this);
+    this._view.canvas.addEventListener('click', this.elementClick.bind(this), false);
+
 }
 
 
 export default Chart;
 
-/*let defaultSettings = {
-    graph: graphData,
-    canvasName: canvasName,
-    texts: {
-        size: 80,
-        unit: "px",
-        style: "Arial",
-        color: "green",
-        getFont: function () {
-            return "" + defaultSettings.texts.size + defaultSettings.texts.unit + " " + defaultSettings.texts.style;
-        },
-        x: 50,
-        y: 50
-    },
-    arcs: {
-        centerX: 25,
-        centerY: 25,
-        radius: 25,
-        startAngle: 0,
-        endAngle: Math.PI * 2,
-        counterClockwiseValue: true
-    }
-};*/
-/**
- * $('#myCanvas').click(function (e) {
-    var clickedX = e.pageX - this.offsetLeft;
-    var clickedY = e.pageY - this.offsetTop;
-     
-    for (var i = 0; i < circles.length; i++) {
-        if (clickedX < circles[i].right && clickedX > circles[i].left && clickedY > circles[i].top && clickedY < circles[i].bottom) {
-            alert ('clicked number ' + (i + 1));
-        }
-    }
-});
- */
+
+
