@@ -1,6 +1,4 @@
 
-/**drawGraphLabels is currently reversed need to reverse letters and numbers */
-
 function drawGraphLabels(chart, context, settings) {
 
     let axis = getGraphAxis(chart);
