@@ -13,9 +13,12 @@
  *      3.1. 
  */
 
+//REFACTOR
+
 import parseGraph from './parseGraph'
 import drawDataPoints from './drawDataPoints'
 import drawLabels from './drawLabels'
+import getRelations from './getRelations'
 
 //Chart
 function Chart(chartId, graph = []) {
@@ -77,11 +80,13 @@ Chart.prototype.render = function () {
     //get view
     this._view = this.getView(this._chartId);
 
-    this._labels = drawLabels(this._chartData, this._view.context, settings.texts);
+    //drawLabels does not have a return
+    drawLabels(this._chartData, this._view.context, settings.texts);
+    //drawDataPoints has a return of dataPoints
     this._dataPoints = drawDataPoints(this._chartData, this._view.context, settings.arcs.radius);
 
 }
-Chart.prototype.elementClick = function (event) {
+Chart.prototype.elementSelected = function (event) {
 
     let clickedX = event.pageX - this._view.canvas.offsetLeft;
     let clickedY = event.pageY - this._view.canvas.offsetTop;
@@ -92,8 +97,10 @@ Chart.prototype.elementClick = function (event) {
 
         if (clickedX < position.right && clickedX > position.left && clickedY < position.bottom && clickedY > position.top) {
 
-            //got clicked element
-            console.log(this._dataPoints[i]);
+            //got clicked element and getRelations
+            let relations = getRelations(this._dataPoints[i].name, this._chartData);
+            console.log(relations);
+
         }
     }
 }
@@ -104,7 +111,7 @@ Chart.prototype.init = function () {
 
     //events
     window.onresize = this.render.bind(this);
-    this._view.canvas.addEventListener('click', this.elementClick.bind(this), false);
+    this._view.canvas.addEventListener('click', this.elementSelected.bind(this), false);
 
 }
 
