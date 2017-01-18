@@ -11,7 +11,7 @@ export function Graph(graphId, graphData = []) {
     this.ID = graphId;
     this.data = new GraphData(graphData);
 }
-Graph.prototype.getRelations = function (elementName) {
+Graph.prototype.getRelations = function(elementName) {
 
     let graph = this.data.graphElements;
 
@@ -212,7 +212,7 @@ export function GraphView(graphId, graphElements, graphAxis) {
     this.elements = new ViewElements(graphId);
 
 }
-GraphView.prototype.getDataPoints = function (graphData) {
+GraphView.prototype.getDataPoints = function(graphData) {
 
     //DataPoint
     function DataPoint(name, x, y, radius) {
@@ -250,7 +250,7 @@ GraphView.prototype.getDataPoints = function (graphData) {
 
     return dataPoints;
 }
-GraphView.prototype.drawLabels = function () {
+GraphView.prototype.drawLabels = function() {
 
     this.elements.context.font = '20px Arial'; //settings.getFont();
     this.elements.context.fillStyle = 'green'; //settings.color;
@@ -274,7 +274,7 @@ GraphView.prototype.drawLabels = function () {
     }
 
 }
-GraphView.prototype.drawDataPoints = function () {
+GraphView.prototype.drawDataPoints = function() {
 
     function drawCircle(ctx, x, y, radius) {
 
@@ -285,26 +285,94 @@ GraphView.prototype.drawDataPoints = function () {
     }
 
     this.dataPoints.forEach(dataPoint => {
+
         drawCircle(this.elements.context, dataPoint.shape.x, dataPoint.shape.y, dataPoint.shape.radius)
     });
 }
-GraphView.prototype.drawDataPointRelations = function () {
+GraphView.prototype.getActiveDataPoint = function(x, y) {
+
+    let clickedX = x - this.elements.canvas.offsetLeft;
+    let clickedY = y - this.elements.canvas.offsetTop;
+
+    for (var i = 0; i < this.dataPoints.length; i++) {
+
+        let surface = this.dataPoints[i].surface;
+
+        if (clickedX < surface.right && clickedX > surface.left && clickedY < surface.bottom && clickedY > surface.top) {
+
+            //got clicked element
+            let activeElement = this.dataPoints[i].name;
+            return activeElement;
+        }
+    }
+
+    return null;
+}
+GraphView.prototype.drawDataPointRelations = function(relations) {
+
+    this.elements.context.clearRect(0, 0, this.elements.canvas.width, this.elements.canvas.height);
+    let dataPoints = this.dataPoints;
+    let context = this.elements.context;
+
+    relations.forEach(relation => {
+        //drawLine(relation, dataPoints, context);
+        drawRelation(relation, dataPoints, context);
+    });
+
+    function drawRelation(points, dataPoints, context){
+        
+        let start = dataPoints.filter(dataPoint => {
+            return dataPoint.name === points.start
+        })[0];
+
+        let end = dataPoints.filter(dataPoint => {
+            return dataPoint.name === points.end;
+        })[0];
+
+        drawLineWithCircle(start.shape, end.shape, context);
+    }
+    function drawLineWithCircle(start, end, context) {
+
+        context.beginPath();
+
+        //line start
+        context.moveTo(start.x, start.y);
+        //start active circle
+        drawActiveCircle(start, context);
+        //line end
+        context.lineTo(end.x, end.y);
+        //end active circle
+        drawActiveCircle(end, context);
+
+        //style
+        context.lineWidth = 2;
+        context.strokeStyle = 'blue';
+        context.stroke();
+        
+    }
+    function drawActiveCircle(point, ctx){
+        //active circle
+        ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2, true);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'blue';
+        ctx.stroke();
+
+        ctx.moveTo(point.x, point.y);
+    }
 
 }
-GraphView.prototype.render = function (activeElement = null, relations = []) {
+GraphView.prototype.render = function(relations = []) {
 
-    if (activeElement === null && relations.length === 0) {
+    if (relations.length === 0) {
 
         this.drawLabels();
         this.drawDataPoints();
     }
-    if (activeElement !== null && relations.length !== 0) {
+    if (relations.length !== 0) {
 
-        console.log(activeElement);
-        console.log(relations);
+        this.drawDataPointRelations(relations);
+        this.drawLabels();
+        this.drawDataPoints()
 
-        //drawDataPointRelations(activeElement, reations);
-        //drawGraphDataPoints
-        //drawGraphLabels
     }
 }

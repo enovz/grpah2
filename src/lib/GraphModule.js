@@ -32,39 +32,33 @@ function GraphModule(Id, data = []) {
 }
 GraphModule.prototype.handleInput = function (event) {
 
-    let clickedX = event.pageX - this.view.elements.canvas.offsetLeft;
-    let clickedY = event.pageY - this.view.elements.canvas.offsetTop;
-
-    for (var i = 0; i < this.view.dataPoints.length; i++) {
-
-        //change position into surface !!!!!!!!!
-        let surface = this.view.dataPoints[i].surface;
-
-        if (clickedX < surface.right && clickedX > surface.left && clickedY < surface.bottom && clickedY > surface.top) {
-
-            //got clicked element and got relations
-            let activeElement = this.view.dataPoints[i].name;
-            let relations = this.graph.getRelations(activeElement);
-            //draw relations
-            this.view.render(activeElement, relations);
-        }
+    let dataPointName = this.view.getActiveDataPoint(event.pageX, event.pageY);
+    if (dataPointName !== null) {
+        let relations = this.graph.getRelations(dataPointName);
+        this.view.render(relations);
     }
 }
-GraphModule.prototype.handleEvents = function () {
-    
+GraphModule.prototype.bindEvents = function () {
+
     //bind events
     this.view.elements.canvas.addEventListener('click', this.handleInput.bind(this), false);
 
 }
+GraphModule.prototype.unbindEvents = function(){
+
+    //unbind events
+    this.view.elements.canvas.removeEventListener('click', this.handleInput.bind(this), false);
+}
 GraphModule.prototype.init = function () {
 
     this.view.render();
-    this.handleEvents();
+    this.bindEvents();
 }
 GraphModule.prototype.stop = function () {
 
     //close view
-    //release eventHandlers
+    this.unbindEvents();
+    
 }
 
 export default GraphModule
