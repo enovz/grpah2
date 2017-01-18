@@ -1,17 +1,27 @@
 
-/**Chart
- * 1. takes container and data:
- *      1.2. container is parent
- *      1.3. data is chart data
+/**Graph
  * 
- * 2. properties:
- *      2.1. container
- *      2.2. data
- *      2.3. width / height
+ * Domain problem:
+ *      1. Represent a collection of data as an interactive graph
  * 
- * 3. behaviour:
- *      3.1. 
- */
+ * Model: 
+ *      1. entities : 
+ *              1. Graph => unique by id
+ *              2. Graph Elements => unique by id 
+ *      2. values: 
+ *              1. relations => array of relations between graph elements
+ *              2. view => object containing information for drawing functions
+ * 
+ * Graph:
+ *      Properites:
+ *          1. id => canvas id 
+ *          2. graphData  => array of graphElements
+ * 
+ *      Behaviour:
+ *          3. getRelations(graphElement) => return array of relations to graphElement
+ * 
+ * graphElement
+*/
 
 //REFACTOR
 
@@ -93,14 +103,15 @@ Chart.prototype.elementSelected = function (event) {
 
     for (var i = 0; i < this._dataPoints.length; i++) {
 
+        //change position into surface !!!!!!!!!
         let position = this._dataPoints[i].position;
 
         if (clickedX < position.right && clickedX > position.left && clickedY < position.bottom && clickedY > position.top) {
 
-            //got clicked element and getRelations
+            //got clicked element and got relations
             let relations = getRelations(this._dataPoints[i].name, this._chartData);
             console.log(relations);
-
+            //draw relations
         }
     }
 }
@@ -114,7 +125,6 @@ Chart.prototype.init = function () {
     this._view.canvas.addEventListener('click', this.elementSelected.bind(this), false);
 
 }
-
 
 export default Chart;
 
