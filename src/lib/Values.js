@@ -65,16 +65,19 @@ function getGraphElements(graph) {
 
 export function Settings(canvas, axis) {
 
-    this.dataPoints = dataPointsSettings(canvas, axis);
-    this.labels = lablesSettings(this.dataPoints.x, this.dataPoints.y)
+    //aspectRatio
+    let ratio = (canvas.width / canvas.height);
+
+    this.dataPoints = dataPointsSettings(ratio, canvas, axis);
+    this.labels = lablesSettings(ratio, this.dataPoints.x, this.dataPoints.y)
 
     //console.log(ratio);
     console.log(this.dataPoints);
     console.log(this.labels);
+    console.log(ratio);
 }
-function dataPointsSettings(canvas, axis) {
-    //aspectRatio
-    let ratio = (canvas.width / canvas.height);
+function dataPointsSettings(ratio, canvas, axis) {
+
 
     //test
     let dataPointsY = 1;
@@ -87,10 +90,10 @@ function dataPointsSettings(canvas, axis) {
         dataPointsX = Math.floor((canvas.width / axis.collumns) / ratio);
 
         if (dataPointsX > dataPointsY) {
-            dataPointsRadius = Math.floor(dataPointsX / 4);
+            dataPointsRadius = Math.floor((dataPointsX / 4) / ratio);
         }
         else {
-            dataPointsRadius = Math.floor(dataPointsY / 4);
+            dataPointsRadius = Math.floor((dataPointsY / 4) / ratio);
         }
     }
     if (ratio < 1) {
@@ -111,7 +114,7 @@ function dataPointsSettings(canvas, axis) {
         radius: dataPointsRadius,
     }
 }
-function lablesSettings(dataPointX, dataPointY) {
+function lablesSettings(ratio, dataPointX, dataPointY) {
 
     //labels
     let labelsY = Math.floor(dataPointY / 2);
