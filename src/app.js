@@ -13,7 +13,7 @@ import Chart from './lib/Chart'*/
 chartModule.init();*/
 
 
-import GraphModule from './lib/GraphModule'
+import {GraphModule} from './lib/GraphModule'
 
 let graph = [
     [

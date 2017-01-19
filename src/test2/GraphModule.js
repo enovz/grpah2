@@ -1,14 +1,13 @@
 
-import { Graph} from './Graph'
-import { GraphView } from './GraphView'
+import { Graph, GraphView } from './Entities'
+import { Settings } from './Values'
 
-export function GraphModule(Id, data = []) {
+function GraphModule(Id, data = []) {
 
     this.graph = new Graph(Id, data);
+    //this.view = new GraphView(Id, this.graph.data.graphElements, this.graph.data.graphAxis);
     this.view = new GraphView(this.graph);
-
 }
-
 GraphModule.prototype.handleInput = function (event) {
 
     let dataPointName = this.view.getActiveDataPoint(event.pageX, event.pageY);
@@ -25,7 +24,7 @@ GraphModule.prototype.handleResize = function () {
 GraphModule.prototype.bindEvents = function () {
 
     //bind events
-    this.view._canvas.addEventListener('click', this.handleInput.bind(this), false);
+    this.view.elements.canvas.addEventListener('click', this.handleInput.bind(this), false);
 
     //test
     window.onresize = this.handleResize.bind(this);
@@ -43,5 +42,7 @@ GraphModule.prototype.init = function () {
 GraphModule.prototype.stop = function () {
 
     //close view
-    //this.unbindEvents();
+    this.unbindEvents();
 }
+
+export default GraphModule
